@@ -93,6 +93,7 @@ StatusOr<std::unique_ptr<GlobalData>> Client::TransferToServer(
 
   VLOG(1) << "making transfer to server request";
   VLOG(3) << "TransferToServerRequest: {" << request.DebugString() << "}";
+  log->DumpParam(literal);
   Status s = stub_->TransferToServer(&request, &response);
   VLOG(1) << "done with request";
 
@@ -222,6 +223,7 @@ StatusOr<std::unique_ptr<GlobalData>> Client::Execute(
 
   ExecuteResponse response;
   VLOG(1) << "making execute request: " << request.ShortDebugString();
+  log->Monitor("Exucute() is called in compiler/xla/service/service.cc");
   Status s = stub_->Execute(&request, &response);
   VLOG(1) << "done with request";
 

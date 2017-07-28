@@ -39,6 +39,8 @@ limitations under the License.
 #include "tensorflow/core/platform/macros.h"
 #include "tensorflow/core/platform/stacktrace.h"
 #include "tensorflow/core/platform/types.h"
+#include "tensorflow/interface_to_systemc/logging.h"
+
 
 namespace xla {
 
@@ -642,6 +644,9 @@ class ComputationBuilder {
   // to be used by a ComputationBuilder other than the parent ComputationBuilder
   // then Build() should be used instead.
   Computation BuildAndNoteError();
+
+  // Log operation.
+  Logging* log;
 
  private:
   using PopulateLiteral = std::function<void(Literal*)>;

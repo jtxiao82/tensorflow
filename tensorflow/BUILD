@@ -7,8 +7,8 @@ package(default_visibility = [":internal"])
 licenses(["notice"])  # Apache 2.0
 
 exports_files([
-    "LICENSE",
-    "ACKNOWLEDGMENTS",
+    #"LICENSE",
+    #"ACKNOWLEDGMENTS",
 ])
 
 # Config setting for determining if we are building for Android.
