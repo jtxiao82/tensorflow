@@ -29,6 +29,7 @@ limitations under the License.
 #include "tensorflow/compiler/xla/xla_data.pb.h"
 #include "tensorflow/core/lib/gtl/array_slice.h"
 #include "tensorflow/core/platform/macros.h"
+#include "tensorflow/interface_to_systemc/logging.h"
 
 namespace xla {
 
@@ -177,6 +178,9 @@ class Client {
   StatusOr<Computation> LoadSnapshot(const SessionModule& module);
 
   ServiceInterface* stub() { return stub_; }
+
+  // Log Parameters
+  Logging* log; 
 
  private:
   // Returns the execution statistics (e.g., gflop/s) as a string from the

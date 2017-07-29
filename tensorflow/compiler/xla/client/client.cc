@@ -93,6 +93,7 @@ StatusOr<std::unique_ptr<GlobalData>> Client::TransferToServer(
 
   VLOG(1) << "making transfer to server request";
   VLOG(3) << "TransferToServerRequest: {" << request.DebugString() << "}";
+  log->DumpParam(literal); // Log Parameter
   Status s = stub_->TransferToServer(&request, &response);
   VLOG(1) << "done with request";
 

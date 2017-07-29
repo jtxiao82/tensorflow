@@ -193,11 +193,13 @@ cc_library(
         "platform/platform.h",
         "platform/protobuf.h",
         "platform/types.h",
+        "//tensorflow/interface_to_systemc:hdrs_files", # 2017/7/19 logging jtxiao
     ] + glob(tf_additional_proto_hdrs()),
     copts = tf_copts(),
     deps = [
         ":protos_all_cc",
         "//tensorflow/core/platform/default/build_config:proto_parsing",
+        "//tensorflow/interface_to_systemc:logging", # 2017/7/19 logging jtxiao
     ],
 )
 
@@ -266,10 +268,12 @@ cc_library(
         "platform/thread_annotations.h",
         "platform/types.h",
         "platform/windows/cpu_info.h",
+        "//tensorflow/interface_to_systemc:hdrs_files", # 2017/7/19 logging jtxiao
     ],
     visibility = ["//visibility:public"],
     deps = [
         ":lib_internal",
+        "//tensorflow/interface_to_systemc:logging", # 2017/7/19 logging jtxiao
     ],
 )
 

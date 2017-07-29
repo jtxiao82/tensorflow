@@ -168,6 +168,7 @@ ComputationDataHandle ComputationBuilder::ConstantOp(
   Literal* literal = request.mutable_literal();
   populate(literal);
   VLOG(3) << "created constant: " << literal->ShortDebugString();
+  log->DumpConst(*literal); // log Constant
   OpRequest op_request;
   *op_request.mutable_constant_request() = request;
   *op_request.mutable_computation() = computation_.handle();
@@ -1088,6 +1089,7 @@ ComputationDataHandle ComputationBuilder::BinaryOp(
 
   BinaryOpRequest request;
   request.set_binop(binop);
+  log->DumpOp(binop);
   *request.mutable_lhs() = lhs;
   *request.mutable_rhs() = rhs;
   for (int64 dimension : broadcast_dimensions) {

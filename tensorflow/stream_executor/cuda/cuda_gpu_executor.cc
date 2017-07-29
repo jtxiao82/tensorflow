@@ -269,6 +269,7 @@ bool CUDAExecutor::GetKernel(const MultiKernelLoaderSpec &spec,
       return false;
     }
 
+    log->DumpPtx(ptx); // Log PTX
     mutex_lock lock{in_memory_modules_mu_};
     module = in_memory_modules_[orig_ptx];
 

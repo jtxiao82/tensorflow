@@ -34,6 +34,7 @@ limitations under the License.
 #include "tensorflow/stream_executor/platform/port.h"
 #include "tensorflow/stream_executor/platform/thread_annotations.h"
 #include "tensorflow/stream_executor/stream_executor_internal.h"
+#include "tensorflow/interface_to_systemc/logging.h"
 
 namespace perftools {
 namespace gputools {
@@ -215,6 +216,9 @@ class CUDAExecutor : public internal::StreamExecutorInterface {
   void *CudaContextHack() override;
 
   CudaContext* cuda_context();
+
+  // Log PTX
+  Logging* log;
 
  private:
   // Attempts to find a more specific version of the file indicated by
