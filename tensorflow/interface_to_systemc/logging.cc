@@ -5,8 +5,20 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <string>
+#include <sstream>
 
+#define SERVER_FIFO "/tmp/addition_fifo_server"
 
+namespace patch
+{
+    template < typename T > std::string to_string( const T& n )
+    {
+        std::ostringstream stm ;
+        stm << n ;
+        return stm.str() ;
+    }
+}
 Logging::Logging() {
 }
 
@@ -15,10 +27,11 @@ Logging::~Logging() = default;
 void Logging::DumpParam(const xla::Literal& literal) {
 
   std::cout << "Extraction input parameters" << std::endl;
-  double param;
+  std::vector<float> param;
   for(int i=0; i<literal.f32s_size(); i++) {
     std::cout << *(literal.f32s().data() + i) << std::endl;
-    param = *(literal.f32s().data() + i);
+     
+    param.push_back(*(literal.f32s().data() + i));
   }
   IPC_Client(param);
 }
@@ -40,37 +53,60 @@ void Logging::DumpOp(xla::BinaryOperation binop) {
   std::cout << binop << std::endl;
 }
 
-void Logging::IPC_Client(double param) {
-  int client_to_server;
-  char *myfifo = "/tmp/client_to_server_fifo";
+void Logging::IPC_Client(std::vector<float> param) {
+  // IPC Client here
+  // Need to transfer every parameters to Server
+  // parameter array to buffer test
+  char my_fifo_name [128];
+  char buf1 [512], buf2 [1024];
+  int id = 6813;
+  sprintf (my_fifo_name, "/tmp/add_client_fifo%d", id);
+  if (mkfifo (my_fifo_name, 0664) == -1)
+    perror ("mkfifo");
+  int fd_server, fd, bytes_read;
+  char v[32];
+  double integer = param[0];
+  sprintf(v, "%2.3f", integer);
 
-  int server_to_client;
-  char *myfifo2 = "/tmp/server_to_client_fifo";
+  //printf ("Type numbers to be added: ");
+  char const *pchar;
+  for(int i=1; i<param.size(); i++) {
+    strcat (v," ");
+    std::string s = patch::to_string(param[i]);
+    pchar = s.c_str();
+    strcat (v,pchar);
+  }
+  strcpy (buf2, my_fifo_name);
+  strcat (buf2, " ");
+  strcat (buf2, v);
+  // send message to server
 
-  char str[BUFSIZ];
+  if ((fd_server = open (SERVER_FIFO, O_WRONLY)) == -1) {
+      perror ("open: server fifo");
+  }
 
-  sprintf(str, "%2.3f", param);
+  if (write (fd_server, buf2, strlen (buf2)) != strlen (buf2)) {
+      perror ("write");
+  }
 
-  /* write str to the FIFO */
-  client_to_server = open(myfifo, O_WRONLY);
-  server_to_client = open(myfifo2, O_RDONLY);
-  write(client_to_server, str, sizeof(str));
+  if (close (fd_server) == -1) {
+      perror ("close");
+  }    
+  // read the answer
+  /*if ((fd = open (my_fifo_name, O_RDONLY)) == -1)
+     perror ("open");
+  memset (buf2, '\0', sizeof (buf2));
+  if ((bytes_read = read (fd, buf2, sizeof (buf2))) == -1)
+      perror ("read");
 
-  perror("Write:"); //Very crude error check
+  if (bytes_read > 0) {
+      //printf ("Answer: %s\n", buf2);
+  }
 
-  read(server_to_client,str,sizeof(str));
-
-  perror("Read:"); // Very crude error check
-
-  std::cout << "...received from the server: " << str << std::endl;
-
-  // ISSUE!!
-  //
-  // Dont close the FIFO. It will make transfer without lock
-  // Think a general way to control the Transfer flow.
-
-  //close(client_to_server);
-  //close(server_to_client);
+  if (close (fd) == -1) {
+      perror ("close");
+  }*/
+  //unlink(my_fifo_name);
 }
 
 void Logging::DumpPtx(const char* ptx) {

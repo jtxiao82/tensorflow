@@ -47,6 +47,7 @@ limitations under the License.
 #include "tensorflow/core/platform/logging.h"
 #include "tensorflow/core/platform/macros.h"
 #include "tensorflow/core/platform/stream_executor_no_cuda.h"
+#include "tensorflow/interface_to_systemc/logging.h"
 
 namespace xla {
 
@@ -241,6 +242,9 @@ class Service : public ServiceInterface {
   // Returns the backend used to execute computations.
   const Backend& backend() const { return *execute_backend_; }
   Backend* mutable_backend() { return execute_backend_.get(); }
+
+  // Log HLO shape
+  Logging* log;
 
  protected:
   // The constructor is private. Use the NewService factory to create new

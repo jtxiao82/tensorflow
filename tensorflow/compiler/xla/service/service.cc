@@ -765,6 +765,8 @@ tensorflow::Status Service::Execute(const ExecuteRequest* arg,
                       CreateModuleConfig(*program_shape, arg_allocations,
                                          arg->execution_options()));
 
+  log->DumpShape(module_config->entry_computation_layout().ToString());
+
   VLOG(3) << "Execute created HloModuleConfig computation layout: "
           << module_config->entry_computation_layout().ToString();
 

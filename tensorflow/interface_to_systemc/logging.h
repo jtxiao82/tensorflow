@@ -27,7 +27,7 @@ class Logging {
     void DumpOp(xla::BinaryOperation binop);
 
     // IPC Client. Pass the parameter to Chisel hardware wrapper by systemc.
-    void IPC_Client(double param);
+    void IPC_Client(std::vector<float> param);
 
     // Log Ptx assembly code
     void DumpPtx(const char* ptx);
