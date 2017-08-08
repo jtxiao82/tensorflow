@@ -58,6 +58,8 @@ limitations under the License.
 #include "tensorflow/core/platform/types.h"
 #include "tensorflow/core/util/device_name_utils.h"
 
+#include <iostream>
+
 #if GOOGLE_CUDA
 #include "tensorflow/core/common_runtime/gpu/gpu_tracer.h"
 #endif  // GOOGLE_CUDA
@@ -379,6 +381,8 @@ Status DirectSession::Run(const RunOptions& run_options,
     }
   }
 
+  //std::cout << "Session was created with a graph before Run()!" << std::endl;
+
   // Extract the inputs names for this run of the session.
   std::vector<string> input_tensor_names;
   input_tensor_names.reserve(inputs.size());
@@ -417,6 +421,8 @@ Status DirectSession::Run(const RunOptions& run_options,
 
   // Send inputs.
   TF_RETURN_IF_ERROR(SendInputs(inputs, executors_and_keys, run_state.rendez));
+ 
+  //std::cout << "BreakPoint 1" << std::endl;
 
   // Start parallel Executors.
   const int num_executors = executors_and_keys->items.size();
@@ -461,6 +467,7 @@ Status DirectSession::Run(const RunOptions& run_options,
     args.stats_collector = run_state.collector.get();
   }
 
+
 #if GOOGLE_CUDA
   std::unique_ptr<GPUTracer> tracer;
   if (run_options.trace_level() >= RunOptions::HARDWARE_TRACE) {
@@ -503,6 +510,8 @@ Status DirectSession::Run(const RunOptions& run_options,
     run_state.status.Update(errors::Cancelled("Run call was cancelled"));
   }
 
+  //std::cout << "BreakPoint 2" << std::endl;
+
 #if GOOGLE_CUDA
   if (tracer) {
     tracer->Stop();
@@ -514,6 +523,7 @@ Status DirectSession::Run(const RunOptions& run_options,
     mutex_lock l(run_state.mu_);
     TF_RETURN_IF_ERROR(run_state.status);
   }
+
 
   // Receive outputs.
   TF_RETURN_IF_ERROR(
@@ -556,6 +566,7 @@ Status DirectSession::Run(const RunOptions& run_options,
     }
   }
 
+  //std::cout << "Session was successful!" << std::endl;
   return Status::OK();
 }
 
@@ -734,6 +745,7 @@ Status DirectSession::SendInputs(const NamedTensorList& inputs,
                                  IntraProcessRendezvous* rendez) {
   Status s;
   Rendezvous::ParsedKey parsed;
+  
   // Insert the input tensors into the local rendezvous by their
   // rendezvous key.
   for (const auto& input : inputs) {

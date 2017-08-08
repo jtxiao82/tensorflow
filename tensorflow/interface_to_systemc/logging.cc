@@ -68,7 +68,6 @@ void Logging::IPC_Client(std::vector<float> param) {
   double integer = param[0];
   sprintf(v, "%2.3f", integer);
 
-  //printf ("Type numbers to be added: ");
   char const *pchar;
   for(int i=1; i<param.size(); i++) {
     strcat (v," ");
@@ -81,6 +80,11 @@ void Logging::IPC_Client(std::vector<float> param) {
   strcat (buf2, v);
   // send message to server
 
+  // Bug Need to be fixed
+  // Sometimes the server will be blocking when write command is sent.
+  // The reason may be the open() call every time
+  // Sol:
+  // The open() need to move to constructor to be intialization
   if ((fd_server = open (SERVER_FIFO, O_WRONLY)) == -1) {
       perror ("open: server fifo");
   }

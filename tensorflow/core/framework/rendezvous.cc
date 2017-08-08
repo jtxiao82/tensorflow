@@ -30,6 +30,8 @@ limitations under the License.
 #include "tensorflow/core/platform/thread_annotations.h"
 #include "tensorflow/core/platform/types.h"
 
+#include <iostream>
+
 namespace tensorflow {
 
 Rendezvous::ParsedKey& Rendezvous::ParsedKey::operator=(const ParsedKey& b) {
@@ -155,6 +157,8 @@ class LocalRendezvousImpl : public Rendezvous {
     Args recv_args;
     uint64 key_hash = KeyHash(key.FullKey());
     VLOG(2) << "Send " << this << " " << key_hash << " " << key.FullKey();
+    //std::cout << "Send " << this << " " << key_hash << " " << key.FullKey() << std::endl;
+    //std::cout << val.DebugString() << std::endl;
     {
       mutex_lock l(mu_);
       if (!status_.ok()) {

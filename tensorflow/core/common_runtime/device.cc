@@ -21,6 +21,8 @@ limitations under the License.
 #include "tensorflow/core/platform/logging.h"
 #include "tensorflow/core/platform/types.h"
 
+//#include <iostream>
+
 namespace tensorflow {
 
 Device::Device(Env* env, const DeviceAttributes& device_attributes,
@@ -28,6 +30,7 @@ Device::Device(Env* env, const DeviceAttributes& device_attributes,
     : DeviceBase(env), device_attributes_(device_attributes) {
   CHECK(DeviceNameUtils::ParseFullName(name(), &parsed_name_))
       << "Invalid device name: " << name();
+  //std::cout << "Device name: " << name() << std::endl;
   rmgr_ = new ResourceMgr(parsed_name_.job);
 }
 
@@ -39,6 +42,7 @@ DeviceAttributes Device::BuildDeviceAttributes(
     const DeviceLocality& locality, const string& physical_device_desc) {
   DeviceAttributes da;
   da.set_name(name);
+  //std::cout << "Device name: " << name << std::endl;
   do {
     da.set_incarnation(random::New64());
   } while (da.incarnation() == 0);  // This proto field must not be zero

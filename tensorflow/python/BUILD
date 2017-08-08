@@ -3082,3 +3082,14 @@ cuda_py_test(
     ],
     main = "client/session_benchmark.py",
 )
+
+# Add new op
+tf_gen_op_wrapper_py(
+    name = "user_ops",
+    hidden = [
+        "Fact",
+        "ZeroOut",
+    ],
+    require_shape_functions = False,
+)
+#

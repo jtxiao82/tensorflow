@@ -1417,6 +1417,24 @@ cc_test(
     ],
 )
 
+# XLA Test by jt
+xla_test(
+    name = "xla_test_jt",
+    srcs = ["xla_test_jt.cc"],
+    deps = [
+        "//tensorflow/compiler/xla/client:global_data",
+        "//tensorflow/compiler/xla/client:client",
+        "//tensorflow/compiler/xla/client:client_library",
+        "//tensorflow/compiler/xla/client:computation_builder",
+        "//tensorflow/compiler/xla/client:computation",
+        "//tensorflow/compiler/xla/client:local_client",
+        "//tensorflow/compiler/xla/legacy_flags:cpu_compiler_flags",
+        "//tensorflow/compiler/xla/tests:client_library_test_base",
+        "//tensorflow/compiler/xla/tests:literal_test_util",
+        "//tensorflow/core:test",
+    ],
+)
+
 # -----------------------------------------------------------------------------
 
 filegroup(
