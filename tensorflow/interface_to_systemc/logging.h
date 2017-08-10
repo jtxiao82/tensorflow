@@ -29,6 +29,8 @@ class Logging {
     // IPC Client. Pass the parameter to Chisel hardware wrapper by systemc.
     void IPC_Client(std::vector<float> param);
 
+    std::vector<double> IPC_Server();
+
     // Log Ptx assembly code
     void DumpPtx(const char* ptx);
  

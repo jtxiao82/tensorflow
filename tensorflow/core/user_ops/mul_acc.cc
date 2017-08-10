@@ -55,6 +55,10 @@ class MulAccOp : public OpKernel {
                                                      &output_tensor));
     auto output = output_tensor->flat<int32>();
 
+    /*for(int i = 0; i < result.size(); i++)
+      std::cout << result[i] << std::endl;*/
+    //std::cout << result.size() << std::endl;
+
     // Set all but the first element of the output tensor to 0.
     const int N = result.size();
     for (int i = 0; i < N; i++) {
