@@ -142,10 +142,16 @@ static std::unique_ptr<xla::ComputationPlacer> CreateComputationPlacer() {
   return xla::MakeUnique<xla::ComputationPlacer>();
 }
 
+namespace perftools { namespace gputools { namespace executorplugin {
+extern const Platform::Id kExecutorPlatformId;
+} } }
+
 static bool InitModule() {
   xla::ComputationPlacer::RegisterComputationPlacer(se::host::kHostPlatformId,
                                                     &CreateComputationPlacer);
   xla::ComputationPlacer::RegisterComputationPlacer(se::cuda::kCudaPlatformId,
+                                                    &CreateComputationPlacer);
+  xla::ComputationPlacer::RegisterComputationPlacer(se::executorplugin::kExecutorPlatformId,
                                                     &CreateComputationPlacer);
   return true;
 }
