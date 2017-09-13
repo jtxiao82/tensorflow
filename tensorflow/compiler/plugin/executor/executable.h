@@ -28,6 +28,7 @@ limitations under the License.
 
 #include "tensorflow/stream_executor/lib/status.h"
 #include "tensorflow/stream_executor/lib/statusor.h"
+#include "tensorflow/compiler/xla/logging.h"
 
 namespace xla {
 namespace executorplugin {
@@ -57,6 +58,7 @@ class ExecutorExecutable : public Executable {
 
  private:
   TF_DISALLOW_COPY_AND_ASSIGN(ExecutorExecutable);
+  Logging* log;
 };
 
 }  // namespace executorplugin

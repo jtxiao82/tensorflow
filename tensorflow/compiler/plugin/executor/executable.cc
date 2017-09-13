@@ -47,14 +47,13 @@ static se::DeviceMemoryBase AllocateOutputBuffer(sep::ExecutorExecutor* executor
   } else {
     int64 size(xla::ShapeUtil::ByteSizeOf(shape, sizeof(void*)));
     void** buf = reinterpret_cast<void**>(executor->Allocate(size));
-    void** buf_rc = buf;
     for (int64 n = 0; n < xla::ShapeUtil::TupleElementCount(shape); n++) {
       se::DeviceMemoryBase out =
           AllocateSingleOutput(executor, literal.tuple_literals(n));
       *buf++ = out.opaque();
     }
 
-    return se::DeviceMemoryBase(buf_rc, size);
+    return se::DeviceMemoryBase(buf, size);
   }
 }
 
@@ -94,10 +93,46 @@ StatusOr<se::DeviceMemoryBase> ExecutorExecutable::ExecuteOnStream(
            ShapeUtil::ByteSizeOf(param->shape()));
   }
 
+  // **********************************
+  // Send Enable Signal 20170907-jtxiao
+  // **********************************
+  std::vector<float> enable_signal;
+  enable_signal.push_back(1);
+  log->IPC_Client(enable_signal);
+
+  // ****************************************
+  // Receive Return Signal 20170907-jtxiao
+  // ****************************************
+  std::vector<float> interrupt_signal = log->IPC_Server();
+  while(interrupt_signal[0] != 1) {};
+
   // Execute the graph using the evaluator
   HloEvaluator evaluator;
   TF_ASSIGN_OR_RETURN(std::unique_ptr<Literal> output,
                       evaluator.Evaluate(computation, arg_literals_ptrs));
+
+
+  // ***********************************************************
+  // Recv Result 20170907 jtixiao
+  // DeBug jtxiao
+  //   It will be blocked when call TransferLiteralFromDevice()
+  // Solution (Not a good method):
+  //   Recv result move to here
+
+  // Remove row data from vecot 
+  /*int N = output.get()->f32s_size();
+  for(int i = 0; i < N; i++) {
+    output.get()->rm_f32s();
+  }
+
+  std::vector<float> output_ipc;
+  output_ipc = log->IPC_Server();
+
+  // Add new row data to vector
+  for(int i = 0; i < output_ipc.size(); i++) {
+    output.get()->add_f32s(output_ipc[i]);
+  }*/
+  // ***********************************************************
 
   // Copy the result into the return buffer
   perftools::gputools::StreamExecutor* executor(stream->parent());

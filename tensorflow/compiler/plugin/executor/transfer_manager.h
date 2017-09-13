@@ -22,6 +22,7 @@ limitations under the License.
 #include "tensorflow/core/platform/macros.h"
 #include "tensorflow/core/platform/stream_executor_no_cuda.h"
 #include "tensorflow/core/platform/types.h"
+#include "tensorflow/compiler/xla/logging.h" // 20170907-jtxiao
 
 #include <vector>
 
@@ -66,6 +67,9 @@ class ExecutorTransferManager : public TransferManager {
       tensorflow::gtl::ArraySlice<se::StreamExecutor*> executors) override;
 
   int64 GetByteSizeRequirement(const Shape& shape) override;
+
+  Logging* log;
+  int64 count = 0;
 
  private:
   TF_DISALLOW_COPY_AND_ASSIGN(ExecutorTransferManager);

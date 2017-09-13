@@ -34,5 +34,7 @@ cc_library(
     name = "plugin",
     deps = [
         "//tensorflow/compiler/plugin/executor:plugin_lib",
+        "//tensorflow/compiler/xla:logging", # jtxiao
+
     ],
 )

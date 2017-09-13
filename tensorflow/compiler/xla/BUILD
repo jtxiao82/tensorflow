@@ -587,6 +587,19 @@ cc_test(
     ],
 )
 
+# jtxiao
+cc_library(
+    name = "logging",
+    srcs = ["logging.cc"],
+    hdrs = ["logging.h"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "//tensorflow/compiler/xla:xla_data_proto",    
+        "//tensorflow/compiler/xla:xla_proto",    
+        "//tensorflow/compiler/xla:literal_util",
+    ],
+)
+#
 # -----------------------------------------------------------------------------
 
 filegroup(

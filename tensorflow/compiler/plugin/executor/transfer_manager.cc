@@ -30,6 +30,7 @@ limitations under the License.
 #include <string>
 #include <utility>
 #include <vector>
+#include <iostream>
 
 namespace sep = ::perftools::gputools::executorplugin;
 
@@ -74,6 +75,37 @@ Status ExecutorTransferManager::TransferLiteralFromDevice(
   TF_RETURN_IF_ERROR(TransferBufferFromDevice(
       executor, source, ShapeUtil::ByteSizeOf(device_shape),
       literal->MutableInternalData()));
+
+
+  // *************************************
+  // Recv Result 20170907 jtixiao
+
+  // Debug:
+  //   It will be blocked here
+  // Solution (Not a good method):
+  //   Recv result move to executable.cc.
+  // *************************************
+
+  /*for(int i = 0; i < 4; i++)
+    std::cout << literal->shape().dimensions(i) << std::endl;*/
+  int N = literal->f32s_size();
+ 
+  // **************************************************
+  // Remove original value which calculate by Evaluator
+  // **************************************************
+  for(int i = 0; i < N; i++) {
+    literal->rm_f32s();
+  }
+
+  // ***********************************
+  // Receive output from SystemC process
+  // ***********************************
+  std::vector<float> output_ipc;
+  output_ipc = log->RecvResult(literal);
+  for(int i = 0; i < N; i++) {
+    literal->add_f32s(output_ipc[i]);
+  }
+
   if (!ShapeUtil::Equal(literal_shape, device_shape)) {
     literal->Swap(
         literal->Relayout(literal_shape.layout()).get());
@@ -132,6 +164,12 @@ Status ExecutorTransferManager::TransferLiteralToDevice(
         executor, tuple_elements_on_device.size() * sizeof(void*),
         tuple_elements_on_device.data(), destination);
   }
+  
+  // **************************
+  // Send Param 20170907 jtxiao
+  // **************************
+  log->SendParam(literal, count);
+  count++;
 
   return TransferBufferToDevice(executor, GetByteSizeRequirement(shape),
                                 literal.InternalData(),
