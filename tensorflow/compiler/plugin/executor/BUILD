@@ -19,6 +19,7 @@ cc_library(
         "//third_party/eigen3",
         "@local_config_cuda//cuda:cuda_headers",
         "@protobuf//:protobuf_headers",
+        "//tensorflow/compiler/xla:logging", # jtxiao
     ],
 )
 

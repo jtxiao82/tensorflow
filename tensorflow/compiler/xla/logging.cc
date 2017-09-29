@@ -50,25 +50,41 @@ Logging::~Logging() = default;
 
 void Logging::SendParam(const xla::Literal& literal, xla::int64 count) {
 
-  // 
   std::vector<float> param_ipc;
-  for(int i = 0; i < literal.f32s_size() ; i++) {
-    //std::cout << literal.f32s(i) << std::endl;
-    param_ipc.push_back(literal.f32s(i));
-  }
 
+  switch(literal.shape().element_type()) {
+    case xla::U32: 
+      {
+        for(int i = 0; i < literal.u32s_size() ; i++)
+          param_ipc.push_back(literal.u32s(i));
+      }
+      break;
+    case xla::S32:
+      {
+        for(int i = 0; i < literal.s32s_size() ; i++)
+          param_ipc.push_back(literal.s32s(i));
+      }
+      break;
+    case xla::F32:
+      {
+        for(int i = 0; i < literal.f32s_size() ; i++)
+          param_ipc.push_back(literal.f32s(i));
+        
+      }
+      break;
+    default:
+      break;
+  }
   // Response time
   sleep(0.1);
 
   // Use IPC PIPE to send parameters to systemc proccess
   int a = IPC_Client(param_ipc);
-
- 
 }
 
 std::vector<float> Logging::RecvResult(const xla::Literal* literal) {
 
-  // 
+  // Return Result
   std::vector<float> output_ipc;
   output_ipc = IPC_Server();
   return output_ipc;

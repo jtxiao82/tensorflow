@@ -129,6 +129,7 @@ class Literal {
   int f32s_size() const { return f32s().size(); }
   float f32s(int i) const { return f32s_[i]; }
   void add_f32s(float value) { f32s_.push_back(value); }
+  void rm_f32s() { return f32s_.pop_back(); }
   const std::vector<float>& f32s() const { return f32s_; }
   std::vector<float>& f32s() { return f32s_; }
   std::vector<float>* mutable_f32s() { return &f32s_; }
