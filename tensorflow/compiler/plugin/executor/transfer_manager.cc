@@ -168,7 +168,15 @@ Status ExecutorTransferManager::TransferLiteralToDevice(
   // **************************
   // Send Param 20170907 jtxiao
   // **************************
-  log->SendParam(literal, count);
+
+  for(int i = 0; i < 4; i++)
+    std::cout << literal.shape().dimensions(i) << std::endl;
+
+  //if(count == 0) {
+    log->SendParam(literal, count);
+    
+  //}
+  std::cout << count << std::endl;
   count++;
 
   return TransferBufferToDevice(executor, GetByteSizeRequirement(shape),

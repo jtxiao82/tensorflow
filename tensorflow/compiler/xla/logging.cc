@@ -51,6 +51,15 @@ Logging::~Logging() = default;
 void Logging::SendParam(const xla::Literal& literal, xla::int64 count) {
 
   std::vector<float> param_ipc;
+  // ***************
+  // Config Transfer
+  // ***************
+  for(int i = 0; i < 4; i++)
+    param_ipc.push_back(literal.shape().dimensions(i));
+
+  // *****************
+  // Raw Data Transfer
+  // *****************
 
   switch(literal.shape().element_type()) {
     case xla::U32: 
@@ -78,8 +87,7 @@ void Logging::SendParam(const xla::Literal& literal, xla::int64 count) {
   // Response time
   sleep(0.1);
 
-  // Use IPC PIPE to send parameters to systemc proccess
-  int a = IPC_Client(param_ipc);
+  int Transfer = IPC_Client(param_ipc);
 }
 
 std::vector<float> Logging::RecvResult(const xla::Literal* literal) {
@@ -135,7 +143,7 @@ int Logging::IPC_Client(std::vector<float> param) {
   std::cout << "Send Param" << std::endl;
 
   // Open Server fifo file
-  if ((fd_server = open (SERVER_FIFO, O_WRONLY)) == -1) {
+  if ((fd_server = open (SERVER_FIFO, O_RDWR)) == -1) {
       //perror ("open: server fifo");
   }
 
